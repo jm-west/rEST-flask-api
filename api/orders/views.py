@@ -50,7 +50,7 @@ class OrderCreateGet(Resource):
         return new_order, HTTPStatus.CREATED
     
     @orders_namespace.marshal_with(order_model)
-    @jwt_required()
+    # @jwt_required()
     def get(self): #Gets all the orders
         """
         Gets all orders
