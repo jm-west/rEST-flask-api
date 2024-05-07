@@ -26,6 +26,13 @@ class UserTestClass(unittest.TestCase):
             "email": "test@user.com", 
             "password": "password123"
         }
-        response = self.client.post('/auth/signup/',json=data)
+        response = self.client.post('/auth/signup',json=data)
         
         assert response.status_code == 201 
+
+    def test_user_login(self):
+        data = {"email": "test@user.com", "password": "password123"}
+
+        response = self.client.post('/auth/login',json=data)
+        
+        assert response.status_code == 200
