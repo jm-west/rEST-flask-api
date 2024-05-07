@@ -26,20 +26,28 @@ order_model=orders_namespace.model(
 
 class OrderCreateGet(Resource):
     @orders_namespace.expect(order_model)
+    @orders_namespace.marshal_with(order_model)
     # @jwt_required()
     def post(self):
         """
             place a new order
         """
+        # username=get_jwt_identity()
+
+        # current_user=User.query.filter_by(username=username).first()
 
         data=orders_namespace.payload
 
+
         new_order=Order(
             size=data['size'],
-            quantity=data['status'],
+            quantity=data['quantity'],
             flavor=data['flavor'],
         )
-        return data, HTTPStatus.CREATED
+        # new_order.users= current_user
+
+        new_order.save()
+        return new_order, HTTPStatus.CREATED
     
     @orders_namespace.marshal_with(order_model)
     @jwt_required()
