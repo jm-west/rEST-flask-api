@@ -9,16 +9,21 @@ class Config:
     JWT_SECRET_KEY = config('JWT_SECRET_KEY')
     JWT_ACCESS_TOKEN_EXPIRES =timedelta(minutes=30)
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(minutes=30)
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
 class DevConfig(Config):
     DEBUG = config('DEBUG',cast=bool)
     SQLALCHEMY_ECHO = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3')
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
 
 class TestConfig(Config):
-    pass
+    TESTING = config('TESTING',cast=bool)
+    SQLALCHEMY_ECHO = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///'
+    bSQLALCHEMY_TRACK_MODIFICATIONS = False
+
 
 class ProdConfig(Config):
     pass

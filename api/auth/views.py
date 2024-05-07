@@ -5,6 +5,7 @@ from ..models.users import User
 from werkzeug.security import generate_password_hash,check_password_hash
 from argon2 import PasswordHasher
 from http import HTTPStatus
+from werkzeug.exceptions import Conflict,Unauthorized
 
 
 ph = PasswordHasher()
@@ -45,14 +46,18 @@ class SignUp(Resource):
         Creates a new user
         """
         data = request.get_json()
-        new_user = User(
-            username = data.get('username'),
-            email = data.get('email'),
-            passwordHash = ph.hash(data.get('password'))
-        )
-        new_user.save()
 
-        return new_user,HTTPStatus.CREATED
+        try:
+            new_user = User(
+                username = data.get('username'),
+                email = data.get('email'),
+                passwordHash = ph.hash(data.get('password'))
+            )
+            new_user.save()
+
+            return new_user,HTTPStatus.CREATED
+        except Exception as e:
+            raise Conflict(f"User with {data.get('email')} already exists")
 
 @auth_namespace.route('/login')
 class Login(Resource):
@@ -72,7 +77,7 @@ class Login(Resource):
                 "refresh_token": refresh_token 
             }
             return response,HTTPStatus.OK
-        return {"message":"Invalid email or password"},HTTPStatus.UNAUTHORIZED
+        raise Unauthorized("Invalid Credentials")
 
 @auth_namespace.route('/refresh')
 class Refresh(Resource):

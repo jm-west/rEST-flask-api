@@ -2,6 +2,7 @@ from flask_restx import Namespace,Resource,fields
 from flask_jwt_extended import jwt_required,get_jwt_identity
 from ..models.orders import Order
 from ..models.users import User
+from ..utils import db
 from http import HTTPStatus
 
 
@@ -18,6 +19,13 @@ order_model=orders_namespace.model(
         'status':fields.String(description="The status of the Order",
             required=True, enum=['PENDING','IN_TRANSIT','DELIVERED']
         )
+    }
+)
+
+order_status_model=orders_namespace.model(
+    "status",{
+        "order_status":fields.String(description="The status of the order",
+            enum = ['PENDING','IN_TRANSIT','DELIVERED'])
     }
 )
 
@@ -71,18 +79,30 @@ class GetUpdateDelete(Resource):
         return order,HTTPStatus.OK
     
     @orders_namespace.expect(order_model)
+    @orders_namespace.marshal_with(order_model)
+    # @jwt_required()
     def post(self,order_id):
         """
         Updates a single order
         """
         update_order=Order.get_by_id(order_id)
         data=orders_namespace.payload
+        update_order.size=data['size']
+        update_order.quantity=data['quantity']
+        update_order.flavor=data['flavor']
+        db.session.commit()
 
+        return update_order,HTTPStatus.OK
+    
+    @orders_namespace.marshal_with(order_model)
+    @jwt_required()
     def delete(self,order_id):
         """
         Deletes a single order
         """
-        pass
+        order_to_delete=Order.get_by_id(order_id)
+        order_to_delete.delete()
+        return order_to_delete ,HTTPStatus.NO_CONTENT
 
 @orders_namespace.route('/user/<int:user_id>/orders/<int:order_id>')
 class GetSpecficOrderByUser(Resource):
@@ -113,8 +133,16 @@ class UserOrders(Resource):
 
 @orders_namespace.route('/order/status/<int:order_id>')
 class UpdatesOrderStatus(Resource):
+    @orders_namespace.expect(order_status_model)
+    @orders_namespace.marshal_with(order_model)
+    # @jwt_required()
     def patch(self,order_id):
         """
         Gets the status of an order
         """
-        pass
+        data = orders_namespace.payload
+        order_to_update = Order.get_by_id(order_id)
+        order_to_update.status = data['status']
+        db.session.commit()
+
+        return order_to_update,HTTPStatus.OK

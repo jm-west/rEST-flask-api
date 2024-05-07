@@ -8,6 +8,7 @@ from .config.config import config_dict
 from .utils import db
 from .models.orders import Order
 from .models.users import User
+from werkzeug.exceptions import NotFound,MethodNotAllowed
 
 
 def create_app(config=config_dict['dev']):
@@ -19,6 +20,14 @@ def create_app(config=config_dict['dev']):
     db.init_app(app)
     jwt = JWTManager(app) 
     migrate = Migrate(app, db)
+    @api.errorhandler(NotFound)
+    def not_found(error):
+        return {'Error': 'Resource not found'}, 404
+    
+    @app.errorhandler(MethodNotAllowed)
+    def method_not_allowed(error):
+        return {'Error': 'Method not allowed'}, 405
+
     @app.shell_context_processor
     def make_shell_context():
         return {
