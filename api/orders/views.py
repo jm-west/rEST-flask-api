@@ -36,7 +36,7 @@ class OrderCreateGet(Resource):
 
         new_order=Order(
             size=data['size'],
-            quantity=data['status']
+            quantity=data['status'],
             flavor=data['flavor'],
         )
         return data, HTTPStatus.CREATED
