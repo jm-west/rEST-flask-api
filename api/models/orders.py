@@ -28,3 +28,7 @@ class Order(db.Model):
     def save(self):
         db.session.add(self)
         db.session.commit()
+    
+    @classmethod    
+    def get_by_id(cls,order_id):
+        return cls.query.get_or_404(order_id)

@@ -60,16 +60,24 @@ class OrderCreateGet(Resource):
 
 @orders_namespace.route('/order/<int:order_id>')
 class GetUpdateDelete(Resource):
+
+    @orders_namespace.marshal_with(order_model)
+    # @jwt_required()
     def get(self,order_id):
         """
         Gets a single order
         """
-        pass
+        order=Order.get_by_id(order_id)
+        return order,HTTPStatus.OK
+    
+    @orders_namespace.expect(order_model)
     def post(self,order_id):
         """
         Updates a single order
         """
-        pass
+        update_order=Order.get_by_id(order_id)
+        data=orders_namespace.payload
+
     def delete(self,order_id):
         """
         Deletes a single order
@@ -78,19 +86,30 @@ class GetUpdateDelete(Resource):
 
 @orders_namespace.route('/user/<int:user_id>/orders/<int:order_id>')
 class GetSpecficOrderByUser(Resource):
+
+    @orders_namespace.marshal_with(order_model)
+    # @jwt_required()
     def get(self,user_id,order_id):
         """
         Gets a specific order by a user
         """
-        pass
+        user = User.get_by_id(user_id)
+        order = Order.get_by_id(order_id).fileter_by(users=user).first()
+
+        return order,HTTPStatus.OK
 
 @orders_namespace.route('/user/<int:user_id>/orders')
 class UserOrders(Resource):
+    @orders_namespace.marshal_list_with(order_model)
+    # @jwt_required() 
     def get(self,user_id):
         """
         Gets all orders by a user
         """
-        pass
+        user = User.get_by_id(user_id)
+        orders = user.orders
+
+        return orders,HTTPStatus.OK
 
 @orders_namespace.route('/order/status/<int:order_id>')
 class UpdatesOrderStatus(Resource):
