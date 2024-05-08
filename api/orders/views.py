@@ -35,7 +35,7 @@ order_status_model=orders_namespace.model(
 class OrderCreateGet(Resource):
     @orders_namespace.expect(order_model)
     @orders_namespace.marshal_with(order_model)
-    # @jwt_required()
+    @jwt_required()
     def post(self):
         """
             place a new order
@@ -58,7 +58,7 @@ class OrderCreateGet(Resource):
         return new_order, HTTPStatus.CREATED
     
     @orders_namespace.marshal_with(order_model)
-    # @jwt_required()
+    @jwt_required()
     def get(self): #Gets all the orders
         """
         Gets all orders
@@ -70,7 +70,7 @@ class OrderCreateGet(Resource):
 class GetUpdateDelete(Resource):
 
     @orders_namespace.marshal_with(order_model)
-    # @jwt_required()
+    @jwt_required()
     def get(self,order_id):
         """
         Gets a single order
@@ -80,7 +80,7 @@ class GetUpdateDelete(Resource):
     
     @orders_namespace.expect(order_model)
     @orders_namespace.marshal_with(order_model)
-    # @jwt_required()
+    @jwt_required()
     def post(self,order_id):
         """
         Updates a single order
@@ -108,7 +108,7 @@ class GetUpdateDelete(Resource):
 class GetSpecficOrderByUser(Resource):
 
     @orders_namespace.marshal_with(order_model)
-    # @jwt_required()
+    @jwt_required()
     def get(self,user_id,order_id):
         """
         Gets a specific order by a user
@@ -121,7 +121,7 @@ class GetSpecficOrderByUser(Resource):
 @orders_namespace.route('/user/<int:user_id>/orders')
 class UserOrders(Resource):
     @orders_namespace.marshal_list_with(order_model)
-    # @jwt_required() 
+    @jwt_required() 
     def get(self,user_id):
         """
         Gets all orders by a user
@@ -135,7 +135,7 @@ class UserOrders(Resource):
 class UpdatesOrderStatus(Resource):
     @orders_namespace.expect(order_status_model)
     @orders_namespace.marshal_with(order_model)
-    # @jwt_required()
+    @jwt_required()
     def patch(self,order_id):
         """
         Gets the status of an order

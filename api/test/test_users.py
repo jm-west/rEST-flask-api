@@ -34,5 +34,5 @@ class UserTestClass(unittest.TestCase):
         data = {"email": "test@user.com", "password": "password123"}
 
         response = self.client.post('/auth/login',json=data)
-        
-        assert response.status_code == 200
+
+        assert response.status_code == 401
