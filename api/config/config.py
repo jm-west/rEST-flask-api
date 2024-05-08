@@ -2,7 +2,7 @@ import os
 from decouple import config
 from datetime import timedelta 
 
-BASE_DIR = config(os.path.realpath(__file__))
+BASE_DIR=os.path.dirname(os.path.realpath(__file__))
 import os
 import re
 uri = os.getenv('DATABASE_URL')
