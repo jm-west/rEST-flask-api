@@ -1,9 +1,12 @@
 import os
+import re
 from decouple import config
 from datetime import timedelta 
 
-BASE_DIR = os.path.dirname(os.path.realpath(__file__))
-
+BASE_DIR = config(os.path.realpath(__file__))
+uri = os.getenv('DATABASE_URL')
+if uri.startswith("postgres://"):
+    uri = uri.replace("postgres://","postgresql://",1)
 class Config:
     SECRECT_KEY = config('SECRECT_KEY','secret') 
     JWT_SECRET_KEY = config('JWT_SECRET_KEY')
@@ -26,7 +29,10 @@ class TestConfig(Config):
 
 
 class ProdConfig(Config):
-    pass
+    SQLALCHEMY_DATABASE_URI = uri
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    DEBUG = config('DEBUG',cast=bool)
+
 
 
 
