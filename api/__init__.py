@@ -13,8 +13,19 @@ from werkzeug.exceptions import NotFound,MethodNotAllowed
 
 def create_app(config=config_dict['dev']):
     app = Flask(__name__)
-    app.config.from_object(config) 
-    api = Api(app)
+    app.config.from_object(config)
+    authorizations = {
+        "Bearer Auth": {"type": "apiKey",
+                        "in":"header",
+                        "name":"Authorizations",
+                        "description":"Add a JWT with ** bearer &lt;JWT&gt; to authorize"}
+    }
+    api = Api(app,
+              version='1.0',
+              title='Pizza Delivery API',
+              description='A REST API for a pizza ordering system',
+              authorizations=authorizations,
+              security="Bearer Auth")
     api.add_namespace(orders_namespace)
     api.add_namespace(auth_namespace,path='/auth')
     db.init_app(app)

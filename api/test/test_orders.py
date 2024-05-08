@@ -37,3 +37,11 @@ class OrdersTestCase(unittest.TestCase):
         token = create_access_token(identity="testUser")
         headers = {"Authorization" : f"Bearer {token}"}
         response = self.client.post('/orders/order',json=data,headers=headers)
+
+        assert response.status_code == 201
+
+        orders = Order.query.all()
+
+        assert len(orders) == 1
+
+

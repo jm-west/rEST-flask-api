@@ -35,6 +35,7 @@ order_status_model=orders_namespace.model(
 class OrderCreateGet(Resource):
     @orders_namespace.expect(order_model)
     @orders_namespace.marshal_with(order_model)
+    @orders_namespace.doc(description="Places a new order")
     @jwt_required()
     def post(self):
         """
@@ -58,6 +59,7 @@ class OrderCreateGet(Resource):
         return new_order, HTTPStatus.CREATED
     
     @orders_namespace.marshal_with(order_model)
+    @orders_namespace.doc(description="Gets all orders")
     @jwt_required()
     def get(self): #Gets all the orders
         """
@@ -70,6 +72,7 @@ class OrderCreateGet(Resource):
 class GetUpdateDelete(Resource):
 
     @orders_namespace.marshal_with(order_model)
+    @orders_namespace.doc(description="Gets a single order given an ID",params={'order_id': 'An ID'})
     @jwt_required()
     def get(self,order_id):
         """
@@ -80,6 +83,7 @@ class GetUpdateDelete(Resource):
     
     @orders_namespace.expect(order_model)
     @orders_namespace.marshal_with(order_model)
+    @orders_namespace.doc(description="Updates a single order given an ID",params={'order_id': 'An ID'})
     @jwt_required()
     def post(self,order_id):
         """
@@ -95,6 +99,7 @@ class GetUpdateDelete(Resource):
         return update_order,HTTPStatus.OK
     
     @orders_namespace.marshal_with(order_model)
+    @orders_namespace.doc(description="Deletes a single order given an ID",params={'order_id': 'An ID'})
     @jwt_required()
     def delete(self,order_id):
         """
@@ -108,6 +113,7 @@ class GetUpdateDelete(Resource):
 class GetSpecficOrderByUser(Resource):
 
     @orders_namespace.marshal_with(order_model)
+    @orders_namespace.doc(description="Gets a specific order by a user",params={'user_id': 'An ID','order_id': 'An ID'})
     @jwt_required()
     def get(self,user_id,order_id):
         """
@@ -121,6 +127,7 @@ class GetSpecficOrderByUser(Resource):
 @orders_namespace.route('/user/<int:user_id>/orders')
 class UserOrders(Resource):
     @orders_namespace.marshal_list_with(order_model)
+    @orders_namespace.doc(description="Gets all orders by a user",params={'user_id': 'An ID'} )
     @jwt_required() 
     def get(self,user_id):
         """
@@ -135,10 +142,11 @@ class UserOrders(Resource):
 class UpdatesOrderStatus(Resource):
     @orders_namespace.expect(order_status_model)
     @orders_namespace.marshal_with(order_model)
+    @orders_namespace.doc(description="Updates the status of an order given an ID",params={'order_id': 'An ID'})
     @jwt_required()
     def patch(self,order_id):
         """
-        Gets the status of an order
+        Updates the status of an order
         """
         data = orders_namespace.payload
         order_to_update = Order.get_by_id(order_id)
